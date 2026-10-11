@@ -20,8 +20,13 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/configure-pages@v5
       - run: python package_release.py --site-dir dist
+
+      - name: Include walkthrough video
+        run: cp quantum-holdem-walkthrough-v2.mp4 dist/
+
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
+
       - id: deployment
         uses: actions/deploy-pages@v4
