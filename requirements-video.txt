@@ -1,0 +1,2 @@
+-r requirements-dev.txt
+opencv-python>=4.8

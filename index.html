@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101c25">
+  <meta name="description" content="A playable quantum poker game. Change your card odds, read an entangled rival, and bet against Nova.">
+  <title>Quantum Hold’em — play the possibilities</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="learn.css">
+  <link rel="stylesheet" href="state-view.css">
+  <link rel="stylesheet" href="match-layout.css">
+  <script src="quantum.js" defer></script>
+  <script src="game.js" defer></script>
+  <script src="state-view.js" defer></script>
+  <script src="playtest-store.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="match-page">
+  <a href="#actions" class="skip-link">Skip to game controls</a>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="Quantum Hold’em home"><span class="brand-icon" aria-hidden="true">Q</span> Quantum Hold’em</a>
+      <nav aria-label="Game settings">
+        <a class="quiet-button learn-link" href="learn.html">Learn &amp; experiment</a>
+        <button id="soundButton" class="quiet-button" type="button" aria-pressed="false">Sound off</button>
+        <button id="fullscreenButton" class="quiet-button" type="button">Full screen</button>
+        <button id="rulesButton" class="quiet-button" type="button">How to play <span aria-hidden="true">↗</span></button>
+        <button id="settingsButton" class="quiet-button" type="button">Settings</button>
+      </nav>
+    </header>
+    <section class="intro" aria-labelledby="title">
+      <div><p class="eyebrow">A little poker. A little interference.</p><h1 id="title">Play the <em>possibilities.</em></h1><p class="intro-copy">Two cards. Two quantum moves. One rival to outplay.</p></div>
+      <div class="match-meta"><span class="eyebrow">TWO DECKS · HEADS-UP</span><strong id="handNumber">Hand 1 <span>/ 10</span></strong><div id="matchScore">You 0 · Nova 0</div></div>
+    </section>
+    <main class="game-grid" aria-label="Quantum Hold’em match">
+      <section class="table-section" aria-label="Poker table">
+        <div class="table">
+          <div class="seat-row">
+            <div class="seat"><span class="avatar nova-avatar" aria-hidden="true">N</span><div><h2>Nova <span class="seat-tag">OPPONENT</span></h2><p><strong id="novaStack">1,000</strong> chips <span id="novaBet"></span></p></div></div>
+            <div class="opponent-info"><span id="novaMoves">2 quantum moves</span><span id="novaState" class="turn-tag">Watching the table</span></div>
+          </div>
+          <div id="novaCards" class="nova-cards" aria-label="Nova’s private cards"></div>
+          <div class="board-zone">
+            <div class="board-heading"><span id="street" class="street-tag">PREFLOP</span><span class="pot">POT <strong id="pot">20</strong></span></div>
+            <div id="board" class="board" aria-label="Community cards"></div>
+            <p id="boardHint" class="board-hint">Community cards arrive after each betting round.</p>
+          </div>
+          <div class="seat-row player-seat-row">
+            <div class="seat"><span class="avatar you-avatar" aria-hidden="true">Y</span><div><h2>You <span class="seat-tag">PLAYER</span></h2><p><strong id="youStack">990</strong> chips <span id="youBet"></span></p></div></div>
+            <span id="youState" class="turn-tag active">Your move</span>
+          </div>
+          <div id="yourCards" class="your-cards" aria-label="Your private cards"></div>
+        </div>
+        <section class="actions" id="actions" tabindex="-1" aria-label="Betting controls">
+          <div class="status-line"><span class="status-light" aria-hidden="true"></span><p id="status" role="status" aria-live="polite">Tune a card, lock a card, or play the hand.</p></div>
+          <div id="bettingControls">
+            <div class="bet-sizing"><label for="betSize" id="betLabel">Bet size</label><input id="betSize" type="range" min="20" max="980" step="1" value="40"><output id="betOutput" for="betSize">40</output><button id="potBetButton" class="size-button" type="button">½ pot</button><button id="allInButton" class="size-button" type="button">Max</button></div>
+            <div class="action-buttons"><button id="foldButton" class="button fold-button" type="button">Fold</button><button id="checkCallButton" class="button secondary-button" type="button">Check</button><button id="betButton" class="button primary-button" type="button">Bet 40</button></div>
+          </div>
+          <div id="handResult" class="hand-result" hidden><div><p class="eyebrow" id="resultEyebrow">HAND COMPLETE</p><h2 id="resultTitle"></h2><p id="resultDetail"></p></div><button id="nextButton" class="button primary-button" type="button">Next hand <span aria-hidden="true">→</span></button></div>
+          <details id="handReview" class="hand-review"></details><button id="exportHandButton" class="quiet-button" type="button" hidden>Export revealed hand for Qiskit replay ↓</button>
+        </section>
+
+      </section>
+      <aside class="control-panel" aria-label="Quantum moves and linked cards">
+        <div class="panel-title"><div><p class="eyebrow">YOUR EDGE</p><h2>Make your move.</h2></div><div id="moveTokens" class="move-tokens" aria-label="2 quantum moves remaining"><span></span><span></span></div></div>
+        <p class="panel-copy">Two moves to tune or measure either card. <a href="learn.html">Try three challenge hands first →</a></p>
+        <p class="beginner-note">Start here: see the flop, compare both faces, then decide whether strength or linked information is worth a move. Phase preparations vary; H is not always an upgrade.</p><button id="advancedToggle" class="quiet-button" type="button" aria-expanded="false">More quantum options · Z / S / X / Y ▾</button><button id="openStateDesk" class="quiet-button" type="button">See state change ↗</button>
+        <section class="tuning-section" aria-labelledby="tuneTitle">
+          <div class="section-heading"><h3 id="tuneTitle">01 <span>Tunable card</span></h3><span id="tuneState" class="mini-tag">UNRESOLVED</span></div>
+          <div id="odds" class="odds"></div>
+          <div id="tunableWaveView"></div>
+          <button id="interfereButton" class="move-button" type="button"><span class="move-icon" aria-hidden="true">H</span><span><strong>Interfere · mix amplitudes</strong><small id="interferePreview">Preview the new face odds</small></span><span class="move-cost">1 move</span></button>
+          <p class="move-explanation">H adds and subtracts the two waves. Preview it in the state desk beside the controls to see reinforcement or cancellation.</p>
+          <div class="phase-buttons"><button id="phaseButton" class="move-button compact" type="button" aria-label="Flip phase: Z gate, one move"><strong>Z · Flip phase</strong></button><button id="quarterPhaseButton" class="move-button compact" type="button" aria-label="Quarter-turn phase: S gate, one move"><strong>S · ¼ turn</strong></button></div><span id="phasePreview" hidden></span><span id="phaseHint" hidden></span>
+        </section>
+        <div class="basis-selector"><label for="measurementBasis">Measurement</label><select id="measurementBasis"><option value="Z">Z · rank + suit</option><option value="X">X · plus / minus</option><option value="Y">Y · phase direction</option></select><p id="basisHint">Z locks the exact face. X and Y disturb the state without revealing a card face.</p></div>
+        <section class="link-section" aria-labelledby="linkTitle">
+          <div class="section-heading"><h3 id="linkTitle">02 <span>Linked rivals</span></h3><span class="mini-tag linked-tag">SHARED STATE</span></div>
+          <div id="linkDiagram" class="link-diagram"></div>
+          <div id="linkedWaveView"></div>
+          <p id="linkHint" class="link-hint">Your second cards have opposite candidate faces. Lock yours to learn Nova’s linked face too.</p>
+          <button class="move-button compact" id="linkInterfereButton" type="button"><span><strong>Mix linked state · H gate</strong><small id="linkPreview">Changes the joint correlations</small></span><span class="move-cost">1 move</span></button>
+          <p class="move-explanation">Yes, this tunes your half of the pair. X then H can turn a phase readout into a definite face; Z reveals but locks. Neither lets you choose a random readout.</p>
+          <div class="phase-buttons"><button id="linkPhaseButton" class="move-button compact" type="button" aria-label="Flip linked phase: Z gate, one move"><strong>Z · Flip phase</strong></button><button id="linkQuarterPhaseButton" class="move-button compact" type="button" aria-label="Quarter-turn linked phase: S gate, one move"><strong>S · ¼ turn</strong></button></div>
+        </section>
+        <div class="strategy-note" id="strategyNote">Wait for the flop before spending both moves. The board tells you which face matters.</div>
+        <details class="activity" open><summary>Table activity</summary><ol id="activityLog" aria-label="Recent table events"></ol></details>
+      </aside>
+        <section class="state-desk" id="statePanel" aria-labelledby="stateDeskTitle"><div class="state-desk-heading"><div><p class="eyebrow">SEE THE QUANTUM CHANGE</p><h2 id="stateDeskTitle">Your state desk</h2></div><div class="state-inspect-tabs" role="group" aria-label="Choose state to inspect"><button type="button" data-inspect="0" aria-pressed="true">Card 1</button><button type="button" data-inspect="1" aria-pressed="false">Linked pair</button><button type="button" id="inspectNova" hidden>Nova · training</button></div></div><button id="closeStateDesk" class="quiet-button" type="button">Close state view ×</button><p id="decisionWhy" class="decision-why" role="status"></p><div id="stateDesk" aria-live="polite"></div><div id="stateDeskKey"></div><p class="visual-key-note" id="stateDeskHint">Choose a card, then preview a gate to see what it changes.</p></section>
+    </main>
+    <footer><span>This effort is supported by Qollab &amp; IonQ</span><span>Quantum Playground <span aria-hidden="true">·</span> Play-money match</span></footer>
+  </div>
+  <dialog id="rulesDialog" class="rules-dialog" aria-labelledby="rulesTitle">
+    <form method="dialog"><button class="dialog-close quiet-button" aria-label="Close rules">×</button></form>
+    <p class="eyebrow">WELCOME TO THE TABLE</p><h2 id="rulesTitle">Same poker. New possibilities.</h2>
+    <p>Play ten hands against Nova. Each player starts with 1,000 chips and antes 10 per hand. The larger stack at the end wins. A player running out of chips ends the match early.</p>
+    <section class="poker-primer"><h3>Poker in 30 seconds</h3><p>Use the best five of your two private cards and five community cards. A pair means two matching ranks; three of a kind means three. A straight is five consecutive ranks; a flush is five cards of one suit. Higher categories win; within a category, ranks and kickers break ties.</p><p>Check costs nothing when no bet is due. Call matches the rival’s bet. Raise increases it. Fold gives up this pot. Chips are play money. You need not measure to bet: you can bet on a range of possible hands.</p></section><ol class="rules-list">
+      <li><strong>Read your cards.</strong> Your two candidate faces (different ranks, possibly different suits) are visible to you. Nova’s cards stay face down until showdown. Your first card is tunable; the second is linked to Nova’s second card. The community cards are ordinary cards.</li>
+      <li><strong>Choose two quantum moves.</strong> Mix amplitudes, shift phase, or measure either card. Z reveals and locks a complete card face; X and Y reveal a private phase-basis outcome and disturb the state. Each action costs one move.</li>
+      <li><strong>Read the link.</strong> Linked cards share a public contract: the same two candidate faces in different decks. They start on opposite branches, so learning yours can reveal Nova’s linked rank and suit. Mixing or measuring in another basis changes that relationship. Your panel shows only what your own observations let you infer. Neither player chooses a measurement outcome.</li>
+      <li><strong>Bet on your judgment.</strong> Check when nobody has bet; otherwise call, raise, or fold. Nova can do the same. Bets are capped at the smaller available stack, so there are no side pots.</li>
+      <li><strong>Finish the hand.</strong> After the river betting round, unresolved cards are measured automatically. The best five-card poker hand wins. Folded private cards remain hidden. Earned linked deductions do not reveal the whole opponent hand.</li>
+      <li><strong>Two physical decks.</strong> Identical faces from different decks are allowed. Five of a kind outranks a straight flush. Private cards reserve their two possible faces; no physical card is dealt twice.</li>
+    </ol>
+    <details class="science-details"><summary>What is actually quantum?</summary><p>Each card has one qubit: |0⟩ selects its first complete face (rank and suit), |1⟩ its second. Z measures that complete-face basis. X measures plus/minus superpositions; Y measures +i/minus-i superpositions. Those are three different complete one-qubit bases, not three parts of one basis. Other directions are possible, but this game uses the standard three.</p><p>The simulator retains complex amplitudes and density matrices, not just face probabilities. H mixes amplitudes; Z reverses relative phase; S shifts it by a quarter turn. Measurements project the state into basis states. A later face measurement uses that updated state.</p><p>The shared Bell pair evolves under either player's actions. Private readouts condition only the owner's knowledge; the other player sees the outcome-averaged state. This prevents hidden results leaking through odds. Local actions cannot choose or remotely change the rival's unconditional outcome probabilities.</p><p>This browser runs a classical simulation of quantum mechanics. The Qiskit verification suite checks the same preparations, gates, measurement channels, and coherence comparisons. The <a href="learn.html#lab">experiment lab</a> explains what a classical mixture can and cannot reproduce. No computational advantage is claimed.</p></details>
+    <div id="rulesGateGuide" class="gate-reference"></div>
+    <form method="dialog"><button class="button primary-button dialog-done">Let’s play</button></form>
+  </dialog>
+  <dialog id="settingsDialog" class="rules-dialog settings-dialog" aria-labelledby="settingsTitle"><form method="dialog"><button class="dialog-close quiet-button" aria-label="Close settings">×</button></form><p class="eyebrow">YOUR VIEW OF THE TABLE</p><h2 id="settingsTitle">Game settings</h2><label for="novaVisibility">Show Nova’s cards</label><select id="novaVisibility"><option value="showdown">Only after showdown</option><option value="always">Always · learning mode</option><option value="never">Never reveal</option></select><p id="visibilityExplanation">Nova’s independent candidates, readouts, and actual hand stay private until showdown. Linked candidates form a public contract.</p><p>Visibility changes your display only. Nova still uses its own information to choose moves. Unmeasured cards have possible faces, not an already chosen exact face.</p><label class="playtest-consent"><input id="recordPlaytest" type="checkbox"> Record anonymous playtest events on this device</label><p>No uploads or names. Recording is off by default. <a href="playtest.html">Give feedback or export/delete your local observations →</a></p><form method="dialog"><button class="button primary-button dialog-done">Back to game</button></form></dialog>
+  <noscript><p class="noscript">Enable JavaScript to play Quantum Hold’em.</p></noscript>
+</body>
+</html>
